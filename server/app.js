@@ -47,8 +47,16 @@ io.sockets.on("connection", (socket) => {
     }
   });
 
+  socket.on("choosingWord", (roomId, word) => {
+    if (io.sockets.adapter.rooms.get(roomId) && roomId in rooms) {
+      rooms[roomId].setWordToGuess(word);
+    }
+  });
+
   socket.on("guess", (roomId, guess) => {
-    rooms[roomId].game();
+    if (io.sockets.adapter.rooms.get(roomId) && roomId in rooms) {
+      rooms[roomId].guess(socket.id, guess);
+    }
   });
 
   socket.on("getRoomInfo", (roomId, callback) => {
