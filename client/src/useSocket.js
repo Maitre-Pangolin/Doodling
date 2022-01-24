@@ -10,7 +10,7 @@ export const useSocket = () => {
 
     newSocket.on("roomData", (data) => {
       setRoom(data);
-      console.log(data);
+      //console.log(data);
     });
 
     setSocket(newSocket);

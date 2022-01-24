@@ -9,7 +9,9 @@ class Room {
     this.activePlayerId = null;
     this.wordToGuess = "";
     this.wordToGuessPlaceHolder = "";
-    this.playerWhoGuessed = [];
+    this.playersWhoGuessed = [];
+    this.numberOfRound = 1;
+    this.currentRound = 0;
     this.io = io;
 
     this.emitRoomData();
@@ -27,8 +29,10 @@ class Room {
 
   startGame() {
     this.gameState = "STARTED";
+    //this.emitRoomData();
+    this.currentRound = 1;
     this.nextPlayer();
-    this.proposeWord();
+
     //setInterval(() => this.activatePlayer(), 1000);
   }
 
@@ -40,20 +44,49 @@ class Room {
     } else {
       this.activePlayerId = this.players[0].id;
     }
-    this.playerWhoGuessed;
-    //Should check if game is ended if yes trigger gameEnd
+    this.playersWhoGuessed.push(this.activePlayerId);
 
     this.emitRoomData();
+    this.proposeWord();
   }
 
   guess(playerId, guess) {
-    // if guess right add point and add to playerGuessed
-    // player
-    if (guess === this.wordToGuess) this.io.to(playerId).emit("correct");
+    // should add point to players
+    if (guess === this.wordToGuess && this.gameState === "GUESSING") {
+      this.io.to(playerId).emit("correctGuess");
+      this.playersWhoGuessed.push(playerId);
+      this.emitRoomData();
+      if (this.playersWhoGuessed.length === this.players.length) {
+        this.endTurn(); // SHOULD INTERNALLY EMIT AN END TURN ? No Closure ?
+      }
+    }
   }
 
   endTurn() {
-    //should handle reset server and emit endTurn to clients
+    //Should check if game is ended if yes trigger gameEnd
+    const index = this.players.findIndex((e) => e.id === this.activePlayerId);
+    this.io.to(this.id).emit("endTurnReset");
+    this.playersWhoGuessed = [];
+
+    if (
+      index === this.players.length - 1 &&
+      this.currentRound === this.numberOfRound
+    )
+      return this.gameOver();
+    if (index === this.players.length - 1) {
+      this.currentRound += 1;
+    }
+    this.nextPlayer();
+  }
+
+  gameOver() {
+    this.io.to(this.id).emit("gameOver");
+    this.gameState = "LOBBY";
+    this.activePlayerId = null;
+    this.wordToGuess = "";
+    this.wordToGuessPlaceHolder = "";
+    this.currentRound = 0;
+    this.emitRoomData();
   }
 
   proposeWord() {
@@ -80,6 +113,8 @@ class Room {
       ownerId: this.ownerId,
       activePlayerId: this.activePlayerId,
       wordToGuessPlaceHolder: this.wordToGuessPlaceHolder,
+      playersWhoGuessed: this.playersWhoGuessed,
+      currentRound: this.currentRound,
     };
     this.io.to(this.id).emit("roomData", data);
   }
