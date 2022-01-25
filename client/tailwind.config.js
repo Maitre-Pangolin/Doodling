@@ -3,6 +3,10 @@ module.exports = {
   darkMode: "class",
   theme: {
     extend: {},
+    fontFamily: {
+      sans: ["Lato", "sans-serif"],
+      header: ["Gloria Hallelujah"],
+    },
   },
   plugins: [],
 };

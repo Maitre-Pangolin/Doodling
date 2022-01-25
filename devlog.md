@@ -61,3 +61,14 @@ Adding a socket to a room, each socket is its own room so the room creator just 
 ``` io.sockets.adapter.rooms.get("room name") ```
 
 
+## 2022-01-24
+
+First game logic version without drawing is functionnal, let's work on the front-end.
+
+Worked on Home page, mobile first, reactive.
+
+Need to create the avatar component at some point , with some gif or png atlas. Tailwind is getting kind of fun.
+
+
+
+
