@@ -77,14 +77,6 @@ const Game = ({ socket, room }) => {
           ? wordToGuess
           : room.wordToGuessPlaceHolder}
       </p>
-      <h1>ROOM INFO</h1>
-      <ul>
-        {Object.entries(room).map(([key, value], index) => (
-          <li key={index}>
-            {key} : {typeof value !== "object" ? value : null}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };

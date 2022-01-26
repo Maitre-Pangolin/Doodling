@@ -1,8 +1,10 @@
 import React from "react";
+import RoomInfo from "./RoomInfo";
 
 const Lobby = ({ socket, room }) => {
   return (
     <>
+      <RoomInfo room={room} />
       <h1>Lobby</h1>
       <h1>{room.id}</h1>
       {room.players && (

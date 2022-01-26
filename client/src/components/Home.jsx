@@ -47,7 +47,7 @@ const Home = ({ socket }) => {
               <MdArrowBackIos />
             </div>
             <div>
-              <img src={avatar} alt='avatar' className='w-32' />
+              <img src={avatar} alt='avatar' className='w-32 rounded-md' />
             </div>
             <div className='text-2xl  flex flex-col justify-evenly h-full'>
               <MdArrowForwardIos />
