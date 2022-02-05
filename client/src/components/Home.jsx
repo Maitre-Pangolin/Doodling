@@ -19,7 +19,6 @@ const Home = ({ socket }) => {
 
   return (
     <>
-      <div className='fixed h-screen w-screen bg-blue-100 -z-10 top-0'></div>
       <div>
         <h1 className='text-5xl  md:text-8xl text-center p-2 my-10 tracking-widest text-blue-800 font-header'>
           DOODLING
@@ -33,7 +32,7 @@ const Home = ({ socket }) => {
               value={username}
               onChange={({ target }) => setUsername(target.value)}></input>
             <button
-              className='bg-blue-500 p-4 text-2xl md:text-4xl text-white group '
+              className='bg-blue-500 p-4 text-2xl md:text-4xl text-white group active:bg-blue-400 '
               onClick={() => setUsername(userNameGenerator())}>
               <IoDiceOutline className=' group-hover:rotate-45   transition duration-300 ease-out hover:ease-in' />
             </button>
