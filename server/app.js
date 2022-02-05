@@ -67,6 +67,12 @@ io.sockets.on("connection", (socket) => {
     //callback(false);
   });
 
+  socket.on("draw", (roomId, data) => {
+    if (io.sockets.adapter.rooms.get(roomId) && roomId in rooms) {
+      socket.to(roomId).emit("draw", data);
+    }
+  });
+
   socket.on("disconnecting", () => {
     //Remove player from room and delete room if empty
     console.log(`Disconnecting socket : ${socket.id}`);

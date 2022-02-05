@@ -48,6 +48,7 @@ class Room {
 
     this.emitRoomData();
     this.proposeWord();
+    //END CALLSTACK ?
   }
 
   guess(playerId, guess) {
