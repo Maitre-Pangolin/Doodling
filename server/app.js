@@ -48,6 +48,7 @@ io.sockets.on("connection", (socket) => {
   });
 
   socket.on("choosingWord", (roomId, word) => {
+    console.log(roomId, word);
     if (io.sockets.adapter.rooms.get(roomId) && roomId in rooms) {
       rooms[roomId].setWordToGuess(word);
     }
@@ -70,6 +71,24 @@ io.sockets.on("connection", (socket) => {
   socket.on("draw", (roomId, data) => {
     if (io.sockets.adapter.rooms.get(roomId) && roomId in rooms) {
       socket.to(roomId).emit("draw", data);
+    }
+  });
+
+  socket.on("startDrawing", (roomId, data) => {
+    if (io.sockets.adapter.rooms.get(roomId) && roomId in rooms) {
+      socket.to(roomId).emit("startDrawing", data);
+    }
+  });
+
+  socket.on("endDrawing", (roomId, data) => {
+    if (io.sockets.adapter.rooms.get(roomId) && roomId in rooms) {
+      socket.to(roomId).emit("endDrawing");
+    }
+  });
+
+  socket.on("cleanDrawing", (roomId) => {
+    if (io.sockets.adapter.rooms.get(roomId) && roomId in rooms) {
+      socket.to(roomId).emit("cleanDrawing");
     }
   });
 

@@ -45,9 +45,11 @@ class Room {
       this.activePlayerId = this.players[0].id;
     }
     this.playersWhoGuessed.push(this.activePlayerId);
+    //
 
     this.emitRoomData();
     this.proposeWord();
+
     //END CALLSTACK ?
   }
 
@@ -77,6 +79,8 @@ class Room {
     if (index === this.players.length - 1) {
       this.currentRound += 1;
     }
+    console.log("endTurn");
+    this.io.to(this.id).emit("cleanDrawing");
     this.nextPlayer();
   }
 
@@ -93,6 +97,7 @@ class Room {
   proposeWord() {
     this.gameState = "CHOOSING";
     const words = ["cassoulet", "tree", "paltoquet"];
+    this.emitRoomData();
     this.io.to(this.activePlayerId).emit("proposingWords", words);
   }
 
