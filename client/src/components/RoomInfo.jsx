@@ -6,7 +6,7 @@ const RoomInfo = ({ room }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className='fixed bottom-2 left-2 bg-blue-500/70 p-4 rounded-xl w-fit text-white transition-width  duration-300 ease-out hover:ease-in '>
+    <div className='fixed bottom-2 left-2 bg-blue-500/70 p-4 rounded-xl w-fit text-white transition-width  duration-300 ease-out hover:ease-in z-50'>
       {isOpen ? (
         <>
           <button

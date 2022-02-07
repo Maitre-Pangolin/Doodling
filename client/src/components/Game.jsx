@@ -1,71 +1,69 @@
 import { useEffect, useState } from "react";
 import DrawingArea from "./DrawingArea";
 import RoomInfo from "./RoomInfo";
+import Player from "./Player";
+import ChoosingWord from "./ChoosingWord";
 
 const Game = ({ socket, room }) => {
   const [guess, setGuess] = useState("");
-  const [words, setWords] = useState([]);
   const [wordToGuess, setWordToGuess] = useState("");
   const [hasGuessed, setHasGuessed] = useState(false);
-  /*const [isActivePlayer, setIsActivePlayer] = useState(
-    socket.id === room.activePlayerId
-  );*/
+  const [words, setWords] = useState([]);
 
   useEffect(() => {
-    socket.on("proposingWords", (words) => {
-      setWords(words);
-    });
     socket.on("correctGuess", () => {
       setHasGuessed(true);
       setWordToGuess(guess);
+    });
+    socket.on("proposingWords", (words) => {
+      setWords(words);
     });
     socket.on("endTurnReset", () => {
       setHasGuessed(false);
       setWordToGuess("");
       setGuess("");
-      //setIsActivePlayer(socket.id === room.activePlayerId);
     });
     socket.on("gameOver", () => {});
   }, [guess, socket]);
 
-  /*useEffect(() => {
-    setIsActivePlayer(socket.id === room.activePlayerId);
-  }, [socket.id, room.activePlayerId]);*/
-
   let isActivePlayer = socket.id === room.activePlayerId;
+  const activePlayerName = room.players.find(
+    (player) => (player.id = room.activePlayerId)
+  ).username;
 
   return (
     <>
       <RoomInfo room={room} />
+      {room.gameState === "CHOOSING" && (
+        <ChoosingWord
+          isActivePlayer={isActivePlayer}
+          activePlayerName={activePlayerName}
+          socket={socket}
+          roomId={room.id}
+          setWordToGuess={setWordToGuess}
+          words={words}
+          setWords={setWords}
+        />
+      )}
+      <p className='tracking-widest text-center text-md md:text-2xl my-5'>
+        Looking for :{" "}
+        {isActivePlayer || hasGuessed
+          ? wordToGuess
+          : room.wordToGuessPlaceHolder}
+      </p>
       <DrawingArea
         socket={socket}
         roomId={room.id}
         isActivePlayer={isActivePlayer}
       />
-      {isActivePlayer && (
-        <h2>
-          I'm active {socket.id} {room.activePlayerId}
-        </h2>
-      )}
+
       <div className='flex flex-col gap-2'>
-        <h1>Game</h1>
         <h1>Round {room.currentRound}</h1>
-        {room.players && (
-          <ul>
-            {Object.keys(room.players).map((key) => {
-              const { id, username } = room.players[key];
-              return (
-                <li key={id} className={id === socket.id ? "font-bold" : null}>
-                  {username} {id === room.activePlayerId ? " Active" : null}
-                  {room.playersWhoGuessed.includes(id) &&
-                  !(id === room.activePlayerId)
-                    ? " Found"
-                    : null}
-                </li>
-              );
-            })}
-          </ul>
-        )}
+
+        {room.players.map((player, index) => (
+          <Player key={index} playerInfo={player} />
+        ))}
+
         {!isActivePlayer && !hasGuessed && (
           <>
             <input
@@ -77,45 +75,14 @@ const Game = ({ socket, room }) => {
               disabled={hasGuessed}
               onClick={() => {
                 socket.emit("guess", room.id, guess);
-                //console.log(guess);
               }}>
               Guess
             </button>
           </>
         )}
-        {words.map((word, i) => (
-          <Button
-            key={i}
-            word={word}
-            room={room}
-            socket={socket}
-            setWords={setWords}
-            setWordToGuess={setWordToGuess}
-          />
-        ))}
-        <p className='tracking-widest'>
-          Looking for :{" "}
-          {isActivePlayer || hasGuessed
-            ? wordToGuess
-            : room.wordToGuessPlaceHolder}
-        </p>
       </div>
     </>
   );
 };
 
 export default Game;
-
-function Button({ word, setWords, socket, room, setWordToGuess }) {
-  return (
-    <button
-      className='bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded'
-      onClick={() => {
-        socket.emit("choosingWord", room.id, word);
-        setWords([]);
-        setWordToGuess(word);
-      }}>
-      {word}
-    </button>
-  );
-}
