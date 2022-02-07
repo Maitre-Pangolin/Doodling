@@ -6,7 +6,6 @@ const DrawingArea = ({ socket, roomId, isActivePlayer }) => {
   const SIZE = window.innerWidth <= 768 ? 375 : 768; // weird mobile if using innerWidth in calc
   return (
     <>
-      {isActivePlayer && <h2>Active</h2>}
       <CanvaNoLib
         SIZE={SIZE}
         socket={socket}
