@@ -1,4 +1,5 @@
 // SINGLETON IO ?
+const { randomWord } = require("./words");
 
 class Room {
   constructor(roomId, player, io) {
@@ -96,7 +97,7 @@ class Room {
 
   proposeWord() {
     this.gameState = "CHOOSING";
-    const words = ["cassoulet", "tree", "paltoquet"];
+    const words = [randomWord(), randomWord(), randomWord()];
     this.emitRoomData();
     this.io.to(this.activePlayerId).emit("proposingWords", words);
   }
