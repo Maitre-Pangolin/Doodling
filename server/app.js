@@ -15,14 +15,11 @@ const server = app.listen(PORT, () => {
   console.log(`Server listening on port:${PORT}`);
 });
 
-//const players = { id: "", name: "" };
 const rooms = {};
 
 const io = socket(server); // TRY TO IMPLEMENT SINGLETON
 
 io.sockets.on("connection", (socket) => {
-  //console.log("connection");
-
   socket.on("createRoom", (username) => {
     console.log("Room Creation");
     const roomId = uuidv4();
@@ -58,14 +55,6 @@ io.sockets.on("connection", (socket) => {
     if (io.sockets.adapter.rooms.get(roomId) && roomId in rooms) {
       rooms[roomId].guess(socket.id, guess);
     }
-  });
-
-  socket.on("getRoomInfo", (roomId, callback) => {
-    if (io.sockets.adapter.rooms.get(roomId) && roomId in rooms) {
-      const { id, players, gameState } = rooms[roomId];
-      callback({ id, players, gameState });
-    }
-    //callback(false);
   });
 
   socket.on("draw", (roomId, data) => {

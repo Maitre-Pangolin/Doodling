@@ -8,17 +8,20 @@ function App() {
   const [socket, room] = useSocket();
   //const [socket, room] = useSocket();
   return (
-    <SocketContext.Provider value={socket}>
-      {!room ? (
-        <Home />
-      ) : (
-        <>
-          <RoomContext.Provider value={room}>
-            {room.gameState === "LOBBY" ? <Lobby /> : <Game />}
-          </RoomContext.Provider>
-        </>
-      )}
-    </SocketContext.Provider>
+    <>
+      <div className='bg-blue-200 w-screen h-screen -z-10 fixed top-0'></div>
+      <SocketContext.Provider value={socket}>
+        {!room ? (
+          <Home />
+        ) : (
+          <>
+            <RoomContext.Provider value={room}>
+              {room.gameState === "LOBBY" ? <Lobby /> : <Game />}
+            </RoomContext.Provider>
+          </>
+        )}
+      </SocketContext.Provider>
+    </>
   );
 }
 
