@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
 import RoomInfo from "./RoomInfo";
 import { FiCopy } from "react-icons/fi";
 import Player from "./Player";
+import { RoomContext, SocketContext } from "../context/context";
 
-const Lobby = ({ socket, room }) => {
+const Lobby = () => {
+  const socket = useContext(SocketContext);
+  const room = useContext(RoomContext);
   const isOwner = socket.id === room.ownerId;
 
   return (
     <>
-      <RoomInfo room={room} />
+      <RoomInfo />
       <h2 className='text-5xl  md:text-8xl text-center p-2 my-10 tracking-widest text-blue-800 font-header'>
         Lobby
       </h2>

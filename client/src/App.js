@@ -1,21 +1,24 @@
-import { useSocket } from "./useSocket";
+import { useSocket } from "./hooks/useSocket";
 import Home from "./components/Home";
 import Lobby from "./components/Lobby";
-import Game from "./components/Game";
+import Game from "./components/Game/Game";
+import { RoomContext, SocketContext } from "./context/context";
 
 function App() {
-  const [socket, room, setRoom] = useSocket();
-
-  return !room ? (
-    <Home socket={socket} />
-  ) : (
-    <>
-      {room.gameState === "LOBBY" ? (
-        <Lobby socket={socket} room={room} />
+  const [socket, room] = useSocket();
+  //const [socket, room] = useSocket();
+  return (
+    <SocketContext.Provider value={socket}>
+      {!room ? (
+        <Home />
       ) : (
-        <Game socket={socket} room={room} />
+        <>
+          <RoomContext.Provider value={room}>
+            {room.gameState === "LOBBY" ? <Lobby /> : <Game />}
+          </RoomContext.Provider>
+        </>
       )}
-    </>
+    </SocketContext.Provider>
   );
 }
 

@@ -10,12 +10,11 @@ export const useSocket = () => {
 
     newSocket.on("roomData", (data) => {
       setRoom(data);
-      //console.log(data);
     });
 
     setSocket(newSocket);
     return () => newSocket.close();
   }, []);
 
-  return [socket, room, setRoom];
+  return [socket, room];
 };

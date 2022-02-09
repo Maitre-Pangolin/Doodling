@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import userNameGenerator from "mw-username-generator";
 import { IoDiceOutline } from "react-icons/io5";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import avatar from "../avatar.jpg";
+import { SocketContext } from "../context/context";
 
-const Home = ({ socket }) => {
+const Home = () => {
   const [username, setUsername] = useState(userNameGenerator());
   const [roomId, setRoomId] = useState(null);
+  const socket = useContext(SocketContext);
 
   const handleCreateRoom = () => {
     socket.emit("createRoom", username);

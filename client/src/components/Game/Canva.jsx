@@ -1,9 +1,12 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
+import { SocketContext, RoomContext } from "../../context/context";
 
-const CanvaNoLib = ({ socket, roomId, isActivePlayer, SIZE }) => {
+const Canva = ({ SIZE, isActivePlayer }) => {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const socket = useContext(SocketContext);
+  const room = useContext(RoomContext);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -13,7 +16,7 @@ const CanvaNoLib = ({ socket, roomId, isActivePlayer, SIZE }) => {
     const context = canvas.getContext("2d");
 
     context.lineCap = "round";
-    context.strokeStyle = "black";
+    context.strokeStyle = "azure";
     context.lineWidth = 5;
 
     contextRef.current = context;
@@ -53,7 +56,7 @@ const CanvaNoLib = ({ socket, roomId, isActivePlayer, SIZE }) => {
     contextRef.current.beginPath();
     contextRef.current.moveTo(offsetX, offsetY);
     setIsDrawing(true);
-    socket.emit("startDrawing", roomId, {
+    socket.emit("startDrawing", room.id, {
       x: offsetX / SIZE,
       y: offsetY / SIZE,
     });
@@ -70,14 +73,14 @@ const CanvaNoLib = ({ socket, roomId, isActivePlayer, SIZE }) => {
     }
     contextRef.current.lineTo(offsetX, offsetY);
     contextRef.current.stroke();
-    socket.emit("draw", roomId, { x: offsetX / SIZE, y: offsetY / SIZE });
+    socket.emit("draw", room.id, { x: offsetX / SIZE, y: offsetY / SIZE });
   };
 
   const endDrawing = () => {
     if (!isActivePlayer) return;
     contextRef.current.closePath();
     setIsDrawing(false);
-    socket.emit("endDrawing", roomId);
+    socket.emit("endDrawing", room.id);
   };
 
   return (
@@ -93,4 +96,4 @@ const CanvaNoLib = ({ socket, roomId, isActivePlayer, SIZE }) => {
   );
 };
 
-export default CanvaNoLib;
+export default Canva;

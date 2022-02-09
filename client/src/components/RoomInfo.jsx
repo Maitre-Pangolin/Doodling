@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 import { FaChevronUp } from "react-icons/fa";
+import { RoomContext } from "../context/context";
 
-const RoomInfo = ({ room }) => {
+const RoomInfo = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const room = useContext(RoomContext);
 
   return (
     <div className='fixed bottom-2 left-2 bg-blue-500/70 p-4 rounded-xl w-fit text-white transition-width  duration-300 ease-out hover:ease-in z-50'>
