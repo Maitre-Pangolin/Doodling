@@ -7,9 +7,9 @@ class Room {
     this.ownerId = player.id;
     this.players = [player];
     this.gameState = "LOBBY";
-    this.activePlayerId = null;
+    this.activePlayer = null;
     this.wordToGuess = "";
-    this.wordToGuessPlaceHolder = "";
+    this.wordClue = "";
     this.playersWhoGuessed = [];
     this.numberOfRound = 1;
     this.currentRound = 0;
@@ -38,16 +38,17 @@ class Room {
   }
 
   nextPlayer() {
-    const index = this.players.findIndex((e) => e.id === this.activePlayerId);
-    if (!index) this.activePlayer = this.players[0].id;
-    if (index !== this.players.length - 1) {
-      this.activePlayerId = this.players[index + 1].id;
-    } else {
-      this.activePlayerId = this.players[0].id;
-    }
-    this.playersWhoGuessed.push(this.activePlayerId);
-    //
+    //if (!this.activePlayer) this.activePlayer = this.players[0];
 
+    const index = this.players.findIndex((e) => e.id === this.activePlayer?.id);
+    if (!index) this.activePlayer = this.players[0];
+    if (index !== this.players.length - 1) {
+      this.activePlayer = this.players[index + 1];
+    } else {
+      this.activePlayer = this.players[0];
+    }
+
+    this.playersWhoGuessed.push(this.activePlayer.id);
     this.emitRoomData();
     this.proposeWord();
 
@@ -57,7 +58,7 @@ class Room {
   guess(playerId, guess) {
     // should add point to players
     if (guess === this.wordToGuess && this.gameState === "GUESSING") {
-      this.io.to(playerId).emit("correctGuess");
+      this.io.to(playerId).emit("correctGuess", guess);
       this.playersWhoGuessed.push(playerId);
       this.emitRoomData();
       if (this.playersWhoGuessed.length === this.players.length) {
@@ -68,7 +69,7 @@ class Room {
 
   endTurn() {
     //Should check if game is ended if yes trigger gameEnd
-    const index = this.players.findIndex((e) => e.id === this.activePlayerId);
+    const index = this.players.findIndex((e) => e.id === this.activePlayer.id);
     this.io.to(this.id).emit("endTurnReset");
     this.playersWhoGuessed = [];
 
@@ -88,9 +89,9 @@ class Room {
   gameOver() {
     this.io.to(this.id).emit("gameOver");
     this.gameState = "LOBBY";
-    this.activePlayerId = null;
+    this.activePlayer = null;
     this.wordToGuess = "";
-    this.wordToGuessPlaceHolder = "";
+    this.wordClue = "";
     this.currentRound = 0;
     this.emitRoomData();
   }
@@ -99,17 +100,19 @@ class Room {
     this.gameState = "CHOOSING";
     const words = [randomWord(), randomWord(), randomWord()];
     this.emitRoomData();
-    this.io.to(this.activePlayerId).emit("proposingWords", words);
+    console.log("hey", words);
+    this.io.to(this.activePlayer.id).emit("proposingWords", words);
   }
 
   setWordToGuess(word) {
     this.wordToGuess = word;
-    this.wordToGuessPlaceHolder = word
+    this.wordClue = word
       .split("")
       .map((c) => "_")
       .join("");
     this.gameState = "GUESSING";
     this.emitRoomData();
+    //this.io.to(this.activePlayerId).emit("wordToDraw",);
   }
 
   emitRoomData() {
@@ -118,8 +121,8 @@ class Room {
       players: this.players,
       gameState: this.gameState,
       ownerId: this.ownerId,
-      activePlayerId: this.activePlayerId,
-      wordToGuessPlaceHolder: this.wordToGuessPlaceHolder,
+      activePlayer: this.activePlayer,
+      wordToGuessPlaceHolder: this.wordClue,
       playersWhoGuessed: this.playersWhoGuessed,
       currentRound: this.currentRound,
     };
